@@ -44,11 +44,12 @@ jobs:
           chmod +x ./kubectl
           sudo mv ./kubectl /usr/local/bin/kubectl
 
-      - name: Configure kubectl
+      - name: Configure kubectl with kubeconfig directly
         run: |
-          echo "${{ secrets.KUBECONFIG }}" > kubeconfig.yaml
+          echo "${{ secrets.KUBECONFIG }}" | base64 --decode > kubeconfig.yaml
           export KUBECONFIG=kubeconfig.yaml
           kubectl config get-contexts  # Проверка доступных контекстов
+          kubectl config use-context kubernetes-admin@kubernetes  # Убедитесь, что выбран правильный контекст
 
       - name: Check Kubernetes cluster connectivity
         run: kubectl get nodes  # Проверка подключения к кластеру
