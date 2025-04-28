@@ -7,6 +7,7 @@ pipeline {
         REPO_URL = 'https://github.com/NikDokin/Tester' 
         DOCKER_HUB_REPO = 'shifter1703/test' 
         DOCKER_CREDENTIALS_ID = 'ce217c82-26b0-4acb-b57f-71a11965e25d'  // Убедитесь, что credentials существует
+        IMAGE_TAG = 'latest'
     }
 
     stages { 
