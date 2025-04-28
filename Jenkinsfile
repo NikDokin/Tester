@@ -14,8 +14,6 @@ pipeline {
             steps {
                 script {
                     git branch: 'master', url: env.REPO_URL 
-                    env.IMAGE_TAG = sh(script: "git describe --tags --abbrev=0", returnStdout: true).trim()
-                    echo "Используемый IMAGE_TAG: ${env.IMAGE_TAG}" 
                 }
             }
         }
