@@ -46,7 +46,7 @@ jobs:
 
       - name: Configure kubectl with kubeconfig directly
         run: |
-          echo "${{ secrets.KUBECONFIG }}" | base64 --decode > kubeconfig.yaml
+          echo "${{ secrets.KUBECONFIG }}" > kubeconfig.yaml  # Прямо передаем секрет
           export KUBECONFIG=kubeconfig.yaml
           kubectl config get-contexts  # Проверка доступных контекстов
           kubectl config use-context kubernetes-admin@kubernetes  # Убедитесь, что выбран правильный контекст
