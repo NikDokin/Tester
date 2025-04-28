@@ -48,9 +48,10 @@ jobs:
         run: |
           echo "${{ secrets.KUBECONFIG }}" > kubeconfig.yaml
           export KUBECONFIG=kubeconfig.yaml
+          kubectl config get-contexts  # Проверка доступных контекстов
 
       - name: Check Kubernetes cluster connectivity
-        run: kubectl get nodes
+        run: kubectl get nodes  # Проверка подключения к кластеру
 
       - name: Deploy with Helm
         run: |
