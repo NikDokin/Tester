@@ -44,8 +44,13 @@ jobs:
           chmod +x ./kubectl
           sudo mv ./kubectl /usr/local/bin/kubectl
 
-      - name: Check kubectl version
-        run: kubectl version --client
+      - name: Configure kubectl
+        run: |
+          echo "${{ secrets.KUBECONFIG }}" > kubeconfig.yaml
+          export KUBECONFIG=kubeconfig.yaml
+
+      - name: Check Kubernetes cluster connectivity
+        run: kubectl get nodes
 
       - name: Deploy with Helm
         run: |
