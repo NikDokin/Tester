@@ -1,0 +1,73 @@
+pipeline {
+    agent {
+        label 'RemoteAgentTest'
+    }
+
+    environment { 
+        IMAGE_NAME = 'shifter1703/test' 
+        CONTAINER_NAME = 'test' 
+        REPO_URL = 'https://github.com/NikDokin/Tester' 
+        DOCKER_HUB_REPO = 'shifter1703/test' 
+        DOCKER_CREDENTIALS_ID = 'ce217c82-26b0-4acb-b57f-71a11965e25d' 
+    }
+
+    stages { 
+        stage('Checkout') {
+            steps {
+                script {
+                    git branch: 'v0', url: env.REPO_URL 
+                    env.IMAGE_TAG = sh(script: "git describe --tags --abbrev=0", returnStdout: true).trim()
+                    echo "Используемый IMAGE_TAG: ${env.IMAGE_TAG}" 
+                }
+            }
+        }
+
+
+        stage('Stop and remove container') {
+            steps {
+                script {
+                    sh "docker rm -f ${env.CONTAINER_NAME} || true"
+                }
+            }
+        }
+
+
+        stage('Pull Docker Image') {
+            steps {
+                script {
+                    // Скачиваем Docker-образ из Docker Hub
+                    sh """
+                        docker login -u \${DOCKER_USERNAME} -p \${DOCKER_PASSWORD}
+                        docker pull ${env.IMAGE_NAME}:${env.IMAGE_TAG}
+                        docker pull ${env.IMAGE_NAME}:latest
+                    """
+                }
+            }
+        }
+
+
+        stage('Start container') {
+            steps {
+                script {
+                    sh "docker run -d --name ${env.CONTAINER_NAME}  ${env.IMAGE_NAME}:${env.IMAGE_TAG}" 
+                }
+            }
+        }
+        }
+    }
+
+
+
+    post { 
+        success {
+            echo "The pipeline has been completed successfully!" 
+        }
+        failure {
+            echo "The pipeline ended with an error. Check the logs for details."
+        }
+        always {
+            echo "Pipeline completion completed" 
+            cleanWs() 
+        }
+    }
+}

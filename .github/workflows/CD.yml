@@ -27,33 +27,3 @@ jobs:
         run: |
           docker build -t shifter1703/test .
           docker push shifter1703/test
-
-  deploy:
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Set up Helm
-        uses: azure/setup-helm@v1
-
-      - name: Install kubectl
-        run: |
-          curl -LO "https://storage.googleapis.com/kubernetes-release/release/v1.24.0/bin/linux/amd64/kubectl"
-          chmod +x ./kubectl
-          sudo mv ./kubectl /usr/local/bin/kubectl
-
-      - name: Configure kubectl with kubeconfig directly
-        run: |
-          echo "${{ secrets.KUBECONFIG }}" > kubeconfig.yaml  # Прямо передаем секрет
-          export KUBECONFIG=kubeconfig.yaml
-          kubectl config get-contexts  # Проверка доступных контекстов
-          kubectl config use-context kubernetes-admin@kubernetes  # Убедитесь, что выбран правильный контекст
-
-      - name: Check Kubernetes cluster connectivity
-        run: kubectl get nodes  # Проверка подключения к кластеру
-
-      - name: Deploy with Helm
-        run: |
-          helm upgrade --install test ./chart --set image.tag=latest
