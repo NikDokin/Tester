@@ -36,12 +36,11 @@ pipeline {
                 script {
                     // Удаляем старый образ (если существует)
                     sh "docker rmi -f ${env.IMAGE_NAME}:${env.IMAGE_TAG} || true"
-                    sh "docker rmi -f ${env.IMAGE_NAME}:latest || true"
                 }
             }
         }
 
-        
+
         stage('Pull Docker Image') {
             steps {
                 script {
