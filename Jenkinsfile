@@ -20,6 +20,7 @@ pipeline {
             }
         }
 
+
         stage('Stop and remove container') {
             steps {
                 script {
@@ -29,6 +30,18 @@ pipeline {
             }
         }
 
+
+        stage('Remove old Docker image') {
+            steps {
+                script {
+                    // Удаляем старый образ (если существует)
+                    sh "docker rmi -f ${env.IMAGE_NAME}:${env.IMAGE_TAG} || true"
+                    sh "docker rmi -f ${env.IMAGE_NAME}:latest || true"
+                }
+            }
+        }
+
+        
         stage('Pull Docker Image') {
             steps {
                 script {
